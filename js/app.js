@@ -8,7 +8,7 @@ window.BRECHO_CONFIG = {
   tagline: "Peças únicas com história",
   whatsapp: "5551998348428", // <-- TROCAR pelo número real (DDI+DDD+Número)
   whatsappTextoPadrao: "Olá! Vim pelo site e quero saber mais sobre as peças. 💛",
-  instagram: "@brecho.essencia",
+  instagram: "@brechodasassapoa",
   instagramUrl: "https://instagram.com/brecho.essencia",
   cidade: "São Paulo · SP",
   horario: "Seg a Sáb · 10h às 19h",
