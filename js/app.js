@@ -55,12 +55,23 @@ function applyConfig() {
   $$("[data-year]").forEach((el) => (el.textContent = year));
 }
 
-// Header: compacta no scroll + marca link ativo + busca elegante
+// Header fixo (sticky): compacta no scroll + marca link ativo + busca elegante
 function initHeader() {
   const header = $("#siteHeader");
   const onScroll = () => header && header.classList.toggle("scrolled", window.scrollY > 24);
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
+
+  // Menu mobile: ao fechar, o Bootstrap devolve o foco ao botão do menu (que agora fica fixo no topo) e o navegador
+  // rola a página até a posição original dele. Guardamos a rolagem ao abrir e restauramos ao fechar.
+  const menuMobile = $("#menuMobile");
+  if (menuMobile) {
+    let savedY = 0;
+    menuMobile.addEventListener("show.bs.offcanvas", () => { savedY = window.scrollY; });
+    menuMobile.addEventListener("hidden.bs.offcanvas", () => {
+      setTimeout(() => window.scrollTo({ top: savedY, behavior: "instant" }), 0);
+    });
+  }
 
   const page = document.body.dataset.page || "";
   $$('.site-header .nav-link[data-nav]').forEach((a) => {
