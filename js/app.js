@@ -6,7 +6,7 @@
 window.BRECHO_CONFIG = {
   nome: "Brechó Essência",
   tagline: "Peças únicas com história",
-  whatsapp: "5511999999999", // <-- TROCAR pelo número real (DDI+DDD+Número)
+  whatsapp: "5551998348428", // <-- TROCAR pelo número real (DDI+DDD+Número)
   whatsappTextoPadrao: "Olá! Vim pelo site e quero saber mais sobre as peças. 💛",
   instagram: "@brecho.essencia",
   instagramUrl: "https://instagram.com/brecho.essencia",
