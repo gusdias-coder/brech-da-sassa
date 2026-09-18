@@ -22,8 +22,15 @@
   --shadow-soft:0 8px 28px rgba(27,24,21,.08);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-html,body{overflow-x:hidden}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h-scrolled) + 12px)}
+/* Evita rolagem horizontal SEM quebrar o position:sticky do header.
+   (overflow-x:hidden no html E no body faz o body virar scroll container e o sticky para de funcionar.
+   O overflow-x:clip corta o excesso sem criar scroll container.) */
+html{overflow-x:hidden}
+body{overflow-x:clip!important;overflow-y:visible!important}
+/* O Bootstrap trava a rolagem com overflow:hidden no <body> ao abrir o menu mobile, o que derrubaria o header fixo
+   (o body viraria scroll container). Por isso o body nunca recebe overflow e a trava é feita no <html>. */
+html:has(.offcanvas.show){overflow:hidden}
 body{
   font-family:var(--font-sans);
   background:var(--cream);
@@ -38,16 +45,22 @@ img{max-width:100%}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 
 /* ---------- Header ---------- */
+/* Barra fixa no topo em todas as páginas. O <header> mantém SEMPRE a mesma altura no fluxo da página
+   (sem empurrar o conteúdo quando encolhe); só a barra interna (.navbar) diminui ao rolar. */
 .site-header{
   position:sticky;top:0;z-index:1040;
+  height:var(--header-h);
+  pointer-events:none;
+}
+.site-header .navbar{
+  height:var(--header-h)!important;
+  pointer-events:auto;
   background:rgba(250,246,239,.92);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
-  height:var(--header-h);
   transition:height .35s ease,box-shadow .35s ease,background .35s ease;
 }
-.site-header.scrolled{height:var(--header-h-scrolled);box-shadow:0 4px 20px rgba(27,24,21,.07)}
-.site-header .navbar{height:100%}
+.site-header.scrolled .navbar{height:var(--header-h-scrolled)!important;box-shadow:0 4px 20px rgba(27,24,21,.07)}
 .brand{
   font-family:var(--font-serif);font-size:1.45rem;font-weight:700;
   text-decoration:none;letter-spacing:-.02em;white-space:nowrap;
@@ -70,6 +83,26 @@ img{max-width:100%}
   padding:.42rem .9rem;font-size:.88rem;width:170px;transition:width .3s ease,border-color .3s;
 }
 .search-inline input:focus{width:220px;border-color:var(--accent);outline:none}
+
+/* Barra de 1 linha só: nada quebra de linha nem vaza para fora da barra fixa */
+.site-header .nav-link,.site-header .btn-whats{white-space:nowrap}
+@media(min-width:992px) and (max-width:1399.98px){
+  .site-header .nav-link{font-size:.78rem;letter-spacing:.05em;padding:.4rem .42rem!important}
+  .site-header .nav-link::after{left:.42rem;right:.42rem}
+  .site-header .search-inline input{width:120px}
+  .site-header .search-inline input:focus{width:160px}
+  .site-header .btn-whats{padding:.5rem .95rem!important;font-size:.78rem;letter-spacing:.06em}
+}
+@media(min-width:992px) and (max-width:1199.98px){
+  .site-header .navbar-nav{gap:0}
+  .site-header .nav-link{font-size:.72rem;letter-spacing:.02em;padding:.4rem .3rem!important}
+  .site-header .nav-link::after{left:.3rem;right:.3rem}
+  .site-header .search-inline input{width:88px}
+  .site-header .search-inline input:focus{width:120px}
+  /* WhatsApp vira só o ícone nessa faixa (o botão flutuante e o menu continuam com o texto) */
+  .site-header .btn-whats{font-size:0;padding:.5rem .7rem!important}
+  .site-header .btn-whats i{font-size:1.05rem;margin:0!important}
+}
 
 /* ---------- Buttons ---------- */
 .btn-boutique{
