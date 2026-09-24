@@ -244,6 +244,7 @@ async function initProductPage() {
           </div>
         </div>
         <div class="thumbs" role="tablist" aria-label="Miniaturas">${thumbs}</div>
+        ${p.fotoIlustrativa ? `<p class="small text-muted mt-2">Foto ilustrativa. Consulte as imagens reais da peça antes de comprar.</p>` : ""}
       </div>
       <div class="col-12 col-lg-5">
         <p class="eyebrow">${p.categoria} · ${p.subcategoria || ""}</p>
@@ -263,13 +264,40 @@ async function initProductPage() {
         </dl>
         <div class="d-grid gap-2 mt-3">
           ${p.status === "Vendido"
-            ? `<button class="btn-boutique" disabled aria-disabled="true" style="opacity:.55">Peça vendida</button>`
-            : `<a class="btn-boutique btn-whats text-center" href="${whatsappProdutoLink(p)}" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-1"></i> Quero essa peça no WhatsApp</a>`}
+            ? `<div class="availability-note sold"><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Essa peça já encontrou um novo dono. Veja outros achados no catálogo.</span></div>`
+            : p.status === "Reservado"
+            ? `<div class="availability-note reserved"><i class="bi bi-clock-history" aria-hidden="true"></i><span>Esta peça está reservada e aguarda confirmação. Consulte a Sassá para saber se ela voltou a ficar disponível.</span></div>
+               <a class="btn-outline-b text-center" href="${whatsappProdutoLink(p)}" target="_blank" rel="noopener">Consultar pelo WhatsApp</a>`
+            : `<div class="product-add-actions">
+                 <button type="button" class="btn-add-cart" id="btnAddCartDetail"><i class="bi bi-bag-plus me-1"></i> Adicionar ao carrinho</button>
+                 <a class="btn-boutique text-center" href="checkout.html?item=${p.id}"><i class="bi bi-bag-check me-1"></i> Comprar agora</a>
+               </div>
+               <a class="btn-boutique btn-whats text-center" href="${whatsappProdutoLink(p)}" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-1"></i> Quero essa peça no WhatsApp</a>`}
           <a class="btn-outline-b text-center" href="catalogo.html">Voltar ao catálogo</a>
         </div>
         <p class="small text-muted mt-3"><i class="bi bi-shield-check me-1"></i>Peça única · Higienizada · Reserva mediante confirmação no WhatsApp.</p>
       </div>
     </div>`;
+
+  // Botão "Adicionar ao carrinho" (a peça já some do card quando vendida, mas confere de novo aqui)
+  const btnAddCartDetail = document.getElementById("btnAddCartDetail");
+  if (btnAddCartDetail && window.Cart) {
+    btnAddCartDetail.addEventListener("click", () => {
+      const res = Cart.add({
+        id: p.id, nome: p.nome, preco: p.preco, foto: p.fotos[0],
+        tamanho: p.tamanho, cor: p.cor, status: p.status,
+      });
+      if (res.ok) {
+        CartToast(`"${p.nome}" adicionada ao carrinho! 🛍️`);
+        btnAddCartDetail.classList.add("added");
+        btnAddCartDetail.innerHTML = `<i class="bi bi-bag-check me-1"></i> Adicionada ao carrinho`;
+      } else if (res.reason === "duplicado") {
+        CartToast("Essa peça já está no seu carrinho.");
+      } else {
+        CartToast("Essa peça não está mais disponível.");
+      }
+    });
+  }
 
   // Thumbs -> carousel
   const carouselEl = document.getElementById("galeria");
