@@ -18,7 +18,11 @@
     ],
     "destaque": true,
     "novo": true,
-    "colecao": ["verao", "novidades", "destaques"],
+    "colecao": [
+      "verao",
+      "novidades",
+      "destaques"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-09-10",
     "ordemEditorial": 1
@@ -42,7 +46,11 @@
     ],
     "destaque": true,
     "novo": false,
-    "colecao": ["inverno", "destaques", "achados"],
+    "colecao": [
+      "inverno",
+      "destaques",
+      "achados"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-08-22",
     "ordemEditorial": 2
@@ -66,7 +74,9 @@
     ],
     "destaque": false,
     "novo": true,
-    "colecao": ["novidades"],
+    "colecao": [
+      "novidades"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-09-12",
     "ordemEditorial": 3
@@ -90,7 +100,11 @@
     ],
     "destaque": true,
     "novo": true,
-    "colecao": ["verao", "novidades", "destaques"],
+    "colecao": [
+      "verao",
+      "novidades",
+      "destaques"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-09-08",
     "ordemEditorial": 4
@@ -109,15 +123,17 @@
     "material": "Poliéster crepe",
     "descricao": "Saia midi plissada em tom terracota, cintura com elástico. Leve, elegante e fácil de combinar.",
     "fotos": [
-      "https://images.unsplash.com/photo-1583496661160-fb5886a13d44?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1554568218-0f1715e72254?q=80&w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1644424234926-910967518dbb?q=80&w=800&auto=format&fit=crop"
     ],
     "destaque": false,
     "novo": false,
-    "colecao": ["verao"],
+    "colecao": [
+      "verao"
+    ],
     "status": "Reservado",
     "dataEntrada": "2026-08-15",
-    "ordemEditorial": 5
+    "ordemEditorial": 5,
+    "fotoIlustrativa": true
   },
   {
     "id": "bolsa-couro-06",
@@ -138,7 +154,10 @@
     ],
     "destaque": true,
     "novo": false,
-    "colecao": ["destaques", "achados"],
+    "colecao": [
+      "destaques",
+      "achados"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-08-10",
     "ordemEditorial": 6
@@ -162,7 +181,11 @@
     ],
     "destaque": true,
     "novo": true,
-    "colecao": ["inverno", "novidades", "destaques"],
+    "colecao": [
+      "inverno",
+      "novidades",
+      "destaques"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-09-11",
     "ordemEditorial": 7
@@ -186,7 +209,9 @@
     ],
     "destaque": false,
     "novo": false,
-    "colecao": ["achados"],
+    "colecao": [
+      "achados"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-07-30",
     "ordemEditorial": 8
@@ -210,7 +235,10 @@
     ],
     "destaque": false,
     "novo": true,
-    "colecao": ["novidades", "verao"],
+    "colecao": [
+      "novidades",
+      "verao"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-09-05",
     "ordemEditorial": 9
@@ -234,7 +262,10 @@
     ],
     "destaque": true,
     "novo": false,
-    "colecao": ["inverno", "destaques"],
+    "colecao": [
+      "inverno",
+      "destaques"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-08-18",
     "ordemEditorial": 10
@@ -253,15 +284,18 @@
     "material": "Denim 100% algodão",
     "descricao": "Saia jeans evasê com botões frontais, lavagem clara. Estilo retrô em ótimo estado.",
     "fotos": [
-      "https://images.unsplash.com/photo-1583496661160-fb5886a13d44?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1630952422098-9fdd41bf4bee?q=80&w=800&auto=format&fit=crop"
     ],
     "destaque": false,
     "novo": false,
-    "colecao": ["verao", "achados"],
+    "colecao": [
+      "verao",
+      "achados"
+    ],
     "status": "Vendido",
     "dataEntrada": "2026-07-20",
-    "ordemEditorial": 11
+    "ordemEditorial": 11,
+    "fotoIlustrativa": true
   },
   {
     "id": "lenco-seda-12",
@@ -282,7 +316,10 @@
     ],
     "destaque": false,
     "novo": true,
-    "colecao": ["novidades", "achados"],
+    "colecao": [
+      "novidades",
+      "achados"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-09-09",
     "ordemEditorial": 12
@@ -306,7 +343,10 @@
     ],
     "destaque": true,
     "novo": false,
-    "colecao": ["inverno", "destaques"],
+    "colecao": [
+      "inverno",
+      "destaques"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-08-25",
     "ordemEditorial": 13
@@ -330,7 +370,9 @@
     ],
     "destaque": false,
     "novo": false,
-    "colecao": ["achados"],
+    "colecao": [
+      "achados"
+    ],
     "status": "Disponível",
     "dataEntrada": "2026-08-05",
     "ordemEditorial": 14
