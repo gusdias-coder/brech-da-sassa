@@ -1,373 +1,163 @@
-/* ============================================================
-   catalog.js — render, busca, filtros combináveis, ordenação
-   Fontes: data/products.json (+ data/collections.json nas coleções)
-   Arquitetura preparada para trocar fetchJSON por API futura.
-   ============================================================ */
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo — Brechó da Sassá</title>
+  <meta name="description" content="Garimpe o catálogo: filtre por categoria, tamanho, preço, cor e condição. Peças únicas com compra pelo WhatsApp.">
+  <meta property="og:title" content="Catálogo — Brechó da Sassá">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/animations.css" rel="stylesheet">
+  <link href="css/cart.css" rel="stylesheet">
+</head>
+<body data-page="catalogo">
 
-// Estado dos filtros (combináveis)
-const CatalogState = {
-  all: [],
-  q: "",
-  categoria: "",
-  tamanho: "",
-  preco: "",
-  cor: "",
-  condicao: "",
-  marca: "",
-  destaqueApenas: false,
-  colecao: "",
-  ordenar: "recentes"
-};
-
-function norm(s) {
-  return (s || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
-function matchesSearch(p, q) {
-  if (!q) return true;
-  const hay = norm(`${p.nome} ${p.categoria} ${p.subcategoria} ${p.marca} ${p.cor}`);
-  return norm(q).split(/\s+/).every((t) => hay.includes(t));
-}
-
-function matchesFilters(p, s) {
-  if (s.categoria && p.categoria !== s.categoria) return false;
-  if (s.tamanho && p.tamanho !== s.tamanho) return false;
-  if (s.cor && p.cor !== s.cor) return false;
-  if (s.condicao && p.condicao !== s.condicao) return false;
-  if (s.marca && p.marca !== s.marca) return false;
-  if (s.destaqueApenas && !p.destaque) return false;
-  if (s.colecao && !(p.colecao || []).includes(s.colecao)) return false;
-  if (s.preco) {
-    const [min, max] = s.preco.split("-").map(Number);
-    if (p.preco < min) return false;
-    if (max && p.preco > max) return false;
-  }
-  return matchesSearch(p, s.q);
-}
-
-function sortProducts(list, modo) {
-  const arr = [...list];
-  if (modo === "menor") arr.sort((a, b) => a.preco - b.preco);
-  else if (modo === "maior") arr.sort((a, b) => b.preco - a.preco);
-  else if (modo === "destaques") arr.sort((a, b) => (b.destaque - a.destaque) || (b.ordemEditorial - a.ordemEditorial));
-  else arr.sort((a, b) => new Date(b.dataEntrada) - new Date(a.dataEntrada) || a.ordemEditorial - b.ordemEditorial);
-  return arr;
-}
-
-function activeFilterChips(s) {
-  const chips = [];
-  const map = { categoria: "Categoria", tamanho: "Tam", preco: "Preço", cor: "Cor", condicao: "Condição", marca: "Marca", q: "Busca", colecao: "Coleção" };
-  ["colecao", "categoria", "tamanho", "preco", "cor", "condicao", "marca", "q"].forEach((k) => {
-    if (s[k]) chips.push({ key: k, label: `${map[k]}: ${s[k]}` });
-  });
-  if (s.destaqueApenas) chips.push({ key: "destaqueApenas", label: "Destaques" });
-  return chips;
-}
-
-function fillSelect(select, values, placeholder) {
-  if (!select) return;
-  const current = select.value;
-  select.innerHTML = `<option value="">${placeholder}</option>` +
-    values.map((v) => `<option value="${v}">${v}</option>`).join("");
-  if ([...select.options].some((o) => o.value === current)) select.value = current;
-}
-
-// ---- Render genérico ----
-function renderGrid(gridEl, list, { emptyTitle = "Nenhuma peça encontrada", emptyText = "Tente ajustar os filtros ou a busca." } = {}) {
-  if (!gridEl) return;
-  const countEl = document.querySelector("[data-count]");
-  const chipsEl = document.querySelector("[data-chips]");
-  if (!list.length) {
-    gridEl.innerHTML = `
-      <div class="empty-state grid-empty" style="grid-column:1/-1" role="status">
-        <p class="eyebrow">Nada por aqui (ainda)</p>
-        <h3>${emptyTitle}</h3>
-        <p class="text-muted">Que tal garimpar de outro jeito? ${emptyText}</p>
-        <div class="d-flex gap-2 justify-content-center flex-wrap mt-3">
-          <button class="btn-outline-b" data-clear>Limpar filtros</button>
-          <a class="btn-boutique" data-wa href="#">Chamar no WhatsApp</a>
-        </div>
-      </div>`;
-    applyConfig();
-  } else {
-    gridEl.innerHTML = list.map(productCard).join("");
-  }
-  if (countEl) {
-    const n = list.length;
-    countEl.textContent = n === 1 ? "1 peça" : `${n} peças`;
-  }
-  if (chipsEl) {
-    const chips = activeFilterChips(CatalogState);
-    chipsEl.innerHTML = chips.length
-      ? `<span class="text-muted small me-1">Filtros ativos:</span>` + chips.map((c) =>
-          `<span class="filter-chip">${c.label}<button data-unchip="${c.key}" aria-label="Remover filtro ${c.label}">×</button></span>`).join("")
-      : "";
-  }
-  // Re-observa reveals + fade das imagens
-  if (window.BrechoAnimations) window.BrechoAnimations.observe();
-  const clear = gridEl.parentElement?.querySelector("[data-clear]") || document.querySelector("[data-clear]");
-  clear?.addEventListener("click", () => clearAllFilters());
-}
-
-// ---- Página Catálogo ----
-async function initCatalogPage() {
-  const grid = document.getElementById("catalogGrid");
-  if (!grid) return;
-  const products = await fetchJSON("data/products.json");
-  CatalogState.all = products;
-
-  // Deep links: ?categoria= ?colecao= ?q= ?destaque=1 ?ordenar=
-  CatalogState.categoria = getParam("categoria") || "";
-  CatalogState.colecao = getParam("colecao") || "";
-  CatalogState.q = getParam("q") || "";
-  CatalogState.destaqueApenas = getParam("destaque") === "1";
-  CatalogState.ordenar = getParam("ordenar") || "recentes";
-
-  const cats = [...new Set(products.map((p) => p.categoria))].sort();
-  const tams = [...new Set(products.map((p) => p.tamanho))].sort();
-  const cores = [...new Set(products.map((p) => p.cor))].sort();
-  const conds = [...new Set(products.map((p) => p.condicao))];
-  const marcas = [...new Set(products.map((p) => p.marca))].sort();
-
-  // Preenche selects (desktop + mobile usam mesmos name)
-  $$('select[name="categoria"]').forEach((s) => fillSelect(s, cats, "Todas as categorias"));
-  $$('select[name="tamanho"]').forEach((s) => fillSelect(s, tams, "Todos os tamanhos"));
-  $$('select[name="cor"]').forEach((s) => fillSelect(s, cores, "Todas as cores"));
-  $$('select[name="condicao"]').forEach((s) => fillSelect(s, conds, "Todas as condições"));
-  $$('select[name="marca"]').forEach((s) => fillSelect(s, marcas, "Todas as marcas"));
-
-  // Sincroniza controles com o estado inicial
-  const sync = () => {
-    $$('[name="categoria"]').forEach((el) => (el.value = CatalogState.categoria));
-    $$('[name="tamanho"]').forEach((el) => (el.value = CatalogState.tamanho));
-    $$('[name="preco"]').forEach((el) => (el.value = CatalogState.preco));
-    $$('[name="cor"]').forEach((el) => (el.value = CatalogState.cor));
-    $$('[name="condicao"]').forEach((el) => (el.value = CatalogState.condicao));
-    $$('[name="marca"]').forEach((el) => (el.value = CatalogState.marca));
-    $$('[name="ordenar"]').forEach((el) => (el.value = CatalogState.ordenar));
-    const qb = document.getElementById("searchInput");
-    if (qb) qb.value = CatalogState.q;
-    const coll = document.getElementById("collectionTitle");
-    if (coll && CatalogState.colecao) coll.textContent = `Coleção: ${CatalogState.colecao}`;
-    if (coll && CatalogState.destaqueApenas) coll.textContent = "Peças em destaque";
-  };
-
-  const apply = () => {
-    const list = sortProducts(CatalogState.all.filter((p) => matchesFilters(p, CatalogState)), CatalogState.ordenar);
-    renderGrid(grid, list);
-    syncUrl();
-  };
-
-  const syncUrl = () => {
-    const params = new URLSearchParams();
-    ["q", "categoria", "colecao", "ordenar"].forEach((k) => CatalogState[k] && params.set(k, CatalogState[k]));
-    if (CatalogState.destaqueApenas) params.set("destaque", "1");
-    history.replaceState(null, "", params.toString() ? `catalogo.html?${params}` : "catalogo.html");
-  };
-
-  // Eventos: qualquer controle [data-filter] atualiza o estado
-  $$("[data-filter]").forEach((el) => {
-    el.addEventListener("input", () => {
-      CatalogState[el.dataset.filter] = el.type === "checkbox" ? (el.checked ? true : false) : el.value;
-      // espelha desktop <-> offcanvas
-      $$(`[data-filter="${el.dataset.filter}"]`).forEach((o) => { if (o !== el && o.type !== "checkbox") o.value = el.value; });
-      apply();
-    });
-    el.addEventListener("change", () => {
-      CatalogState[el.dataset.filter] = el.type === "checkbox" ? (el.checked ? true : false) : el.value;
-      $$(`[data-filter="${el.dataset.filter}"]`).forEach((o) => { if (o !== el && o.type !== "checkbox") o.value = el.value; });
-      apply();
-    });
-  });
-
-  document.addEventListener("click", (e) => {
-    const un = e.target.closest("[data-unchip]");
-    if (un) {
-      const k = un.dataset.unchip;
-      CatalogState[k] = k === "destaqueApenas" ? false : "";
-      sync(); apply();
-    }
-    if (e.target.closest("[data-clear]")) clearAllFilters();
-  });
-
-  window.clearAllFilters = () => {
-    Object.assign(CatalogState, { q: "", categoria: "", tamanho: "", preco: "", cor: "", condicao: "", marca: "", destaqueApenas: false, colecao: "" });
-    sync(); apply();
-  };
-
-  sync(); apply();
-}
-
-// ---- Home: novidades + destaques ----
-async function initHome() {
-  if (!document.getElementById("novidadesGrid") && !document.getElementById("destaquesGrid")) return;
-  const products = await fetchJSON("data/products.json");
-  const nov = document.getElementById("novidadesGrid");
-  if (nov) {
-    const list = sortProducts(products.filter((p) => p.status !== "Vendido"), "recentes").slice(0, 8);
-    renderGrid(nov, list);
-  }
-  const dest = document.getElementById("destaquesGrid");
-  if (dest) {
-    const list = products.filter((p) => p.destaque).sort((a, b) => a.ordemEditorial - b.ordemEditorial).slice(0, 4);
-    renderGrid(dest, list);
-  }
-}
-
-// ---- Página Produto (?id=) ----
-async function initProductPage() {
-  const wrap = document.getElementById("productDetail");
-  if (!wrap) return;
-  const products = await fetchJSON("data/products.json");
-  const id = getParam("id");
-  const p = products.find((x) => x.id === id) || products[0];
-  document.title = `${p.nome} · ${BRECHO_CONFIG.nome}`;
-
-  const thumbs = p.fotos.map((f, i) =>
-    `<button class="${i === 0 ? "active" : ""}" data-thumb="${i}" aria-label="Ver foto ${i + 1} de ${p.nome}"><img src="${f}" alt="${p.nome} foto ${i + 1}" loading="lazy"></button>`).join("");
-  const slides = p.fotos.map((f, i) =>
-    `<div class="carousel-item ${i === 0 ? "active" : ""}"><img src="${f}" class="d-block w-100" alt="${p.nome} — foto ${i + 1}" loading="${i ? "lazy" : "eager"}"></div>`).join("");
-
-  wrap.innerHTML = `
-    <div class="row g-4 g-lg-5">
-      <div class="col-12 col-lg-7">
-        <div class="gallery-main">
-          <div id="galeria" class="carousel slide carousel-fade" data-bs-ride="false">
-            <div class="carousel-inner">${slides}</div>
-            ${p.fotos.length > 1 ? `
-            <button class="carousel-control-prev" type="button" data-bs-target="#galeria" data-bs-slide="prev" aria-label="Foto anterior">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#galeria" data-bs-slide="next" aria-label="Próxima foto">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            </button>` : ""}
-          </div>
-        </div>
-        <div class="thumbs" role="tablist" aria-label="Miniaturas">${thumbs}</div>
-        ${p.fotoIlustrativa ? `<p class="small text-muted mt-2">Foto ilustrativa. Consulte as imagens reais da peça antes de comprar.</p>` : ""}
+<header class="site-header" id="siteHeader">
+  <nav class="navbar navbar-expand-lg" aria-label="Navegação principal">
+    <div class="container nav-layout">
+      <a class="brand" href="index.html" aria-label="Brechó da Sassá, página inicial"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-text">Brechó <em>da Sassá</em></span></a>
+      <div class="collapse navbar-collapse justify-content-center" id="menuDesktop"><ul class="navbar-nav"><li class="nav-item"><a class="nav-link" data-nav="inicio" href="index.html">Início</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="catalogo" href="catalogo.html">Catálogo</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="colecoes" href="colecoes.html">Coleções</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="sobre" href="sobre.html">Sobre</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="como-comprar" href="como-comprar.html">Como comprar</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="contato" href="contato.html">Contato</a></li></ul></div>
+      <div class="nav-actions">
+        <a class="nav-search" href="catalogo.html#searchInput" aria-label="Buscar no catálogo"><i class="bi bi-search" aria-hidden="true"></i></a>
+        <button class="btn-cart-icon" type="button" data-cart-toggle aria-label="Abrir carrinho"><i class="bi bi-bag" aria-hidden="true"></i><span class="cart-badge d-none" data-badge-count>0</span></button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile" aria-controls="menuMobile" aria-label="Abrir menu"><i class="bi bi-list" aria-hidden="true"></i></button>
       </div>
-      <div class="col-12 col-lg-5">
-        <p class="eyebrow">${p.categoria} · ${p.subcategoria || ""}</p>
-        <h1 class="mt-1">${p.nome}</h1>
-        <p class="fs-3 fw-bold mt-2">${BRL(p.preco)}</p>
-        <div class="d-flex gap-2 flex-wrap align-items-center">
-          <span class="status-pill status-${p.status}">${p.status}</span>
-          <span class="condition-pill"><i class="bi bi-patch-check"></i> Condição: ${p.condicao}</span>
+    </div>
+  </nav>
+</header>
+<div class="offcanvas offcanvas-end menu-mobile" tabindex="-1" id="menuMobile" aria-labelledby="menuMobileLabel">
+  <div class="offcanvas-header"><span class="brand" id="menuMobileLabel"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-text">Brechó <em>da Sassá</em></span></span><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button></div>
+  <div class="offcanvas-body"><nav aria-label="Menu móvel"><a class="nav-link" data-nav="inicio" href="index.html">Início</a>
+<a class="nav-link" data-nav="catalogo" href="catalogo.html">Catálogo</a>
+<a class="nav-link" data-nav="colecoes" href="colecoes.html">Coleções</a>
+<a class="nav-link" data-nav="sobre" href="sobre.html">Sobre</a>
+<a class="nav-link" data-nav="como-comprar" href="como-comprar.html">Como comprar</a>
+<a class="nav-link" data-nav="contato" href="contato.html">Contato</a></nav>
+    <a class="btn-boutique btn-whats w-100 text-center mt-4" data-wa href="#"><i class="bi bi-whatsapp me-1"></i> Falar no WhatsApp</a>
+  </div>
+</div>
+
+<main>
+  <div class="container page-hero">
+    <p class="eyebrow">Garimpo online</p>
+    <h1 id="collectionTitle">Catálogo</h1>
+    <p class="text-secondary" style="max-width:46ch">Peças únicas para garimpar. Confira medidas e condição antes de escolher.</p>
+    <div class="catalog-editorial" aria-label="Inspiração para o seu garimpo">
+      <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=700&auto=format&fit=crop" alt="Look com peças de moda vintage" loading="lazy" width="700" height="400">
+      <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=700&auto=format&fit=crop" alt="Seleção de roupas em arara" loading="lazy" width="700" height="400">
+    </div>
+  </div>
+
+  <div class="container pb-5">
+    <!-- Barra: busca + ordenar + botão filtros mobile -->
+    <div class="row g-2 align-items-center mb-3">
+      <div class="col-12 col-md-5">
+        <div class="input-group">
+          <span class="input-group-text bg-white" style="border-color:var(--line)"><i class="bi bi-search"></i></span>
+          <input id="searchInput" class="form-control" type="search" placeholder="Buscar por nome, categoria, marca…" aria-label="Buscar peças" data-filter="q">
         </div>
-        <dl class="spec-table mt-4">
-          <dt>Tamanho</dt><dd>${p.tamanho}</dd>
-          <dt>Marca</dt><dd>${p.marca}</dd>
-          <dt>Cor</dt><dd>${p.cor}</dd>
-          <dt>Medidas</dt><dd>${p.medidas}</dd>
-          <dt>Material</dt><dd>${p.material}</dd>
-          <dt>Sobre a peça</dt><dd class="fw-normal text-secondary">${p.descricao}</dd>
-        </dl>
-        <div class="d-grid gap-2 mt-3">
-          ${p.status === "Vendido"
-            ? `<div class="availability-note sold"><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Essa peça já encontrou um novo dono. Veja outros achados no catálogo.</span></div>`
-            : p.status === "Reservado"
-            ? `<div class="availability-note reserved"><i class="bi bi-clock-history" aria-hidden="true"></i><span>Esta peça está reservada e aguarda confirmação. Consulte a Sassá para saber se ela voltou a ficar disponível.</span></div>
-               <a class="btn-outline-b text-center" href="${whatsappProdutoLink(p)}" target="_blank" rel="noopener">Consultar pelo WhatsApp</a>`
-            : `<div class="product-add-actions">
-                 <button type="button" class="btn-add-cart" id="btnAddCartDetail"><i class="bi bi-bag-plus me-1"></i> Adicionar ao carrinho</button>
-                 <a class="btn-boutique text-center" href="checkout.html?item=${p.id}"><i class="bi bi-bag-check me-1"></i> Comprar agora</a>
-               </div>
-               <a class="btn-boutique btn-whats text-center" href="${whatsappProdutoLink(p)}" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-1"></i> Quero essa peça no WhatsApp</a>`}
-          <a class="btn-outline-b text-center" href="catalogo.html">Voltar ao catálogo</a>
+      </div>
+      <div class="col-8 col-md-5">
+        <select class="form-select" name="ordenar" aria-label="Ordenar produtos" data-filter="ordenar">
+          <option value="recentes">Mais recentes</option>
+          <option value="menor">Menor preço</option>
+          <option value="maior">Maior preço</option>
+          <option value="destaques">Destaques</option>
+        </select>
+      </div>
+      <div class="col-4 col-md-2 d-lg-none d-grid">
+        <button class="btn btn-dark" data-bs-toggle="offcanvas" data-bs-target="#filtrosMobile" aria-controls="filtrosMobile"><i class="bi bi-sliders me-1"></i> Filtros</button>
+      </div>
+      <div class="col-12 d-flex align-items-center gap-2 flex-wrap">
+        <span class="small text-muted" data-count aria-live="polite"></span>
+        <span data-chips class="d-flex gap-1 flex-wrap"></span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Painel desktop -->
+      <aside class="col-lg-3 d-none d-lg-block" aria-label="Filtros">
+        <div class="card p-3 position-sticky" style="top:90px;border-color:var(--line);border-radius:12px">
+          <h2 class="h6 text-uppercase mb-3" style="letter-spacing:.15em">Filtrar</h2>
+          <div class="mb-3"><label class="form-label" for="f-cat">Categoria</label><select id="f-cat" class="form-select" name="categoria" data-filter="categoria"></select></div>
+          <div class="mb-3"><label class="form-label" for="f-tam">Tamanho</label><select id="f-tam" class="form-select" name="tamanho" data-filter="tamanho"></select></div>
+          <div class="mb-3"><label class="form-label" for="f-pre">Faixa de preço</label>
+            <select id="f-pre" class="form-select" name="preco" data-filter="preco">
+              <option value="">Todos os preços</option>
+              <option value="0-70">Até R$70</option>
+              <option value="70-120">R$70 – R$120</option>
+              <option value="120-200">R$120 – R$200</option>
+              <option value="200-9999">Acima de R$200</option>
+            </select></div>
+          <div class="mb-3"><label class="form-label" for="f-cor">Cor</label><select id="f-cor" class="form-select" name="cor" data-filter="cor"></select></div>
+          <div class="mb-3"><label class="form-label" for="f-con">Condição</label><select id="f-con" class="form-select" name="condicao" data-filter="condicao"></select></div>
+          <div class="mb-3"><label class="form-label" for="f-mar">Marca</label><select id="f-mar" class="form-select" name="marca" data-filter="marca"></select></div>
+          <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="f-des" data-filter="destaqueApenas"><label class="form-check-label small" for="f-des">Somente destaques</label></div>
+          <button class="btn-outline-b w-100" data-clear>Limpar filtros</button>
         </div>
-        <p class="small text-muted mt-3"><i class="bi bi-shield-check me-1"></i>Peça única · Higienizada · Reserva mediante confirmação no WhatsApp.</p>
+      </aside>
+      <!-- Grade -->
+      <div class="col-12 col-lg-9">
+        <div class="product-grid cols-3" id="catalogGrid" aria-live="polite">
+          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        </div>
       </div>
-    </div>`;
+    </div>
+  </div>
+</main>
 
-  // Botão "Adicionar ao carrinho" (a peça já some do card quando vendida, mas confere de novo aqui)
-  const btnAddCartDetail = document.getElementById("btnAddCartDetail");
-  if (btnAddCartDetail && window.Cart) {
-    btnAddCartDetail.addEventListener("click", () => {
-      const res = Cart.add({
-        id: p.id, nome: p.nome, preco: p.preco, foto: p.fotos[0],
-        tamanho: p.tamanho, cor: p.cor, status: p.status,
-      });
-      if (res.ok) {
-        CartToast(`"${p.nome}" adicionada ao carrinho! 🛍️`);
-        btnAddCartDetail.classList.add("added");
-        btnAddCartDetail.innerHTML = `<i class="bi bi-bag-check me-1"></i> Adicionada ao carrinho`;
-      } else if (res.reason === "duplicado") {
-        CartToast("Essa peça já está no seu carrinho.");
-      } else {
-        CartToast("Essa peça não está mais disponível.");
-      }
-    });
-  }
+<!-- Filtros mobile: offcanvas -->
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="filtrosMobile" aria-labelledby="filtrosMobileLabel" style="height:85vh;border-radius:16px 16px 0 0">
+  <div class="offcanvas-header"><h2 class="h6 mb-0 text-uppercase" id="filtrosMobileLabel" style="letter-spacing:.15em">Filtros</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar filtros"></button></div>
+  <div class="offcanvas-body">
+    <div class="row g-3">
+      <div class="col-6"><label class="form-label">Categoria</label><select class="form-select" name="categoria" data-filter="categoria"></select></div>
+      <div class="col-6"><label class="form-label">Tamanho</label><select class="form-select" name="tamanho" data-filter="tamanho"></select></div>
+      <div class="col-6"><label class="form-label">Preço</label>
+        <select class="form-select" name="preco" data-filter="preco">
+          <option value="">Todos</option><option value="0-70">Até R$70</option><option value="70-120">R$70–120</option>
+          <option value="120-200">R$120–200</option><option value="200-9999">+R$200</option>
+        </select></div>
+      <div class="col-6"><label class="form-label">Cor</label><select class="form-select" name="cor" data-filter="cor"></select></div>
+      <div class="col-6"><label class="form-label">Condição</label><select class="form-select" name="condicao" data-filter="condicao"></select></div>
+      <div class="col-6"><label class="form-label">Marca</label><select class="form-select" name="marca" data-filter="marca"></select></div>
+    </div>
+    <div class="d-flex gap-2 mt-4">
+      <button class="btn-outline-b flex-fill" data-clear>Limpar</button>
+      <button class="btn-boutique flex-fill" data-bs-dismiss="offcanvas">Ver peças</button>
+    </div>
+  </div>
+</div>
 
-  // Thumbs -> carousel
-  const carouselEl = document.getElementById("galeria");
-  const carousel = window.bootstrap ? new bootstrap.Carousel(carouselEl, { interval: false, touch: true }) : null;
-  $$("[data-thumb]", wrap).forEach((btn) => {
-    btn.addEventListener("click", () => {
-      $$("[data-thumb]", wrap).forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      carousel?.to(Number(btn.dataset.thumb));
-    });
-  });
-  carouselEl?.addEventListener("slid.bs.carousel", (e) => {
-    $$("[data-thumb]", wrap).forEach((b) => b.classList.toggle("active", Number(b.dataset.thumb) === e.to));
-  });
+<footer class="site-footer" aria-label="Rodapé">
+  <div class="container py-5"><div class="row g-4">
+    <div class="col-12 col-md-4"><a class="brand" href="index.html">Brechó <em>da Sassá</em></a>
+      <p class="small mt-2" style="color:#B9AE9C"><span data-config="cidade">Porto Alegre · RS</span> · <span data-config="horario">Seg a Sáb · 10h às 19h</span></p></div>
+    <div class="col-6 col-md-4"><ul class="list-unstyled small d-grid gap-1">
+      <li><a href="index.html">Início</a></li><li><a href="catalogo.html">Catálogo</a></li><li><a href="colecoes.html">Coleções</a></li><li><a href="contato.html">Contato</a></li></ul></div>
+    <div class="col-6 col-md-4"><ul class="list-unstyled small d-grid gap-1">
+      <li><a data-wa href="#"><i class="bi bi-whatsapp me-1"></i> WhatsApp</a></li>
+      <li><a data-ig href="#"><i class="bi bi-instagram me-1"></i> Instagram</a></li></ul></div>
+  </div></div>
+  <div class="footer-bottom"><div class="container">© <span data-year>2026</span> <span data-config="nome">Brechó da Sassá</span></div></div>
+</footer>
+<a class="wa-float" data-wa href="#" aria-label="Conversar no WhatsApp"><i class="bi bi-whatsapp"></i></a>
 
-  // Relacionados
-  const rel = document.getElementById("relatedGrid");
-  if (rel) {
-    const list = products.filter((x) => x.id !== p.id && (x.categoria === p.categoria || (x.colecao || []).some((c) => (p.colecao || []).includes(c)))).slice(0, 4);
-    renderGrid(rel, list.length ? list : products.filter((x) => x.id !== p.id).slice(0, 4));
-  }
-  if (window.BrechoAnimations) window.BrechoAnimations.observe();
-}
-
-// ---- Página Coleções (lista + detalhe ?colecao=) ----
-async function initCollectionsPage() {
-  const listEl = document.getElementById("collectionsList");
-  const detailEl = document.getElementById("collectionDetail");
-  if (!listEl && !detailEl) return;
-  const [collections, products] = await Promise.all([fetchJSON("data/collections.json"), fetchJSON("data/products.json")]);
-  const slug = getParam("colecao");
-
-  if (listEl && !slug) {
-    listEl.innerHTML = collections.map((c, i) => `
-      <a href="colecoes.html?colecao=${c.slug}" class="campaign reveal ${i % 2 ? "reveal-d1" : ""}" style="min-height:300px">
-        <img src="${c.imagem}" alt="${c.titulo}" loading="lazy">
-        <div class="campaign-body"><p class="eyebrow text-white-50">${c.nome}</p><h3>${c.titulo}</h3><p class="mb-0">${c.subtitulo}</p></div>
-      </a>`).join("");
-  }
-  if (detailEl && slug) {
-    const c = collections.find((x) => x.slug === slug) || collections[0];
-    document.title = `${c.nome} · ${BRECHO_CONFIG.nome}`;
-    const items = products.filter((p) => (p.colecao || []).includes(c.slug)).sort((a, b) => a.ordemEditorial - b.ordemEditorial);
-    detailEl.innerHTML = `
-      <div class="campaign reveal in" style="min-height:min(60vh,440px)">
-        <img src="${c.imagem}" alt="${c.titulo}">
-        <div class="campaign-body"><p class="eyebrow text-white-50">Coleção · ${c.nome}</p><h1>${c.titulo}</h1><p class="lead mb-0">${c.subtitulo}</p></div>
-      </div>
-      <div class="row justify-content-center text-center mt-4"><div class="col-lg-8"><p class="fs-5 text-secondary reveal in">“${c.manifesto}”</p></div></div>
-      <div class="section-head mt-5"><div><p class="eyebrow">Seleção</p><h2>Peças da coleção</h2></div>
-        <a class="link-more" href="catalogo.html?colecao=${c.slug}">Ver catálogo completo</a></div>
-      <div class="product-grid cols-3" id="colGrid">${items.map(productCard).join("") || `<div class="empty-state" style="grid-column:1/-1"><h3>Em breve</h3><p class="text-muted">Estamos fotografando as peças desta coleção.</p></div>`}</div>
-      <div class="section-tight"><div class="section-head"><div><p class="eyebrow">Editorial</p><h2>Looks & inspiração</h2></div></div>
-        <p class="text-secondary">${c.editorial.texto}</p>
-        <div class="row g-3">${c.editorial.fotos.map((f, i) => `<div class="col-4"><div class="cat-tile" style="aspect-ratio:3/4"><img src="${f}" alt="Editorial ${c.nome} ${i + 1}" loading="lazy"></div></div>`).join("")}</div>
-      </div>
-      <div class="final-cta mt-4"><p class="eyebrow" style="color:#D8C6A8">Gostou de alguma peça?</p>
-        <h2>Chama no WhatsApp antes que venda</h2>
-        <div class="d-flex gap-2 justify-content-center flex-wrap mt-3">
-          <a class="btn-boutique btn-whats" data-wa href="#"><i class="bi bi-whatsapp me-1"></i> Falar no WhatsApp</a>
-          <a class="btn-outline-b" style="color:#FAF6EF!important;border-color:#FAF6EF" href="catalogo.html?colecao=${c.slug}">Ver catálogo</a>
-        </div></div>`;
-    applyConfig();
-  }
-  if (window.BrechoAnimations) window.BrechoAnimations.observe();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  initCatalogPage().catch(console.error);
-  initHome().catch(console.error);
-  initProductPage().catch(console.error);
-  initCollectionsPage().catch(console.error);
-});
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/catalog.js"></script>
+<script src="js/animations.js"></script>
+</body>
+</html>
