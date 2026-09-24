@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Brechó da Sassá — Peças únicas com história</title>
+  <meta name="description" content="Brechó boutique: vestidos, jaquetas, jeans vintage e achados únicos. Peças higienizadas, preço justo e compra pelo WhatsApp.">
+  <meta property="og:title" content="Brechó da Sassá — Peças únicas com história">
+  <meta property="og:description" content="Curadoria vintage premium. Garimpe online e finalize pelo WhatsApp.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/animations.css" rel="stylesheet">
+</head>
+<body data-page="inicio">
+
+<header class="site-header" id="siteHeader">
+  <nav class="navbar navbar-expand-lg h-100" aria-label="Navegação principal">
+    <div class="container h-100">
+      <a class="brand" href="index.html" aria-label="Brechó Essência — início">Brechó <em>da Sassá</em></a>
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <form class="search-inline d-none d-lg-flex" data-search role="search" aria-label="Buscar peças">
+          <input type="search" name="q" placeholder="Buscar…" aria-label="Buscar peça ou marca no catálogo">
+          <button class="btn btn-link p-1" aria-label="Buscar"><i class="bi bi-search"></i></button>
+        </form>
+        <a class="btn-boutique btn-whats d-none d-md-inline-block" data-wa href="#" style="padding:.5rem 1.2rem"><i class="bi bi-whatsapp me-1"></i> WhatsApp</a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile" aria-controls="menuMobile" aria-label="Abrir menu">
+          <i class="bi bi-list fs-3"></i>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse justify-content-center" id="menuDesktop">
+        <ul class="navbar-nav gap-lg-1">
+          <li class="nav-item"><a class="nav-link" data-nav="inicio" href="index.html">Início</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="catalogo" href="catalogo.html">Catálogo</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="colecoes" href="colecoes.html">Coleções</a></li>
+          <li class="nav-item"><a class="nav-link" href="catalogo.html?destaque=1">Destaques</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="sobre" href="sobre.html">Sobre</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="como-comprar" href="como-comprar.html">Como comprar</a></li>
+          <li class="nav-item"><a class="nav-link" data-nav="contato" href="contato.html">Contato</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="menuMobile" aria-labelledby="menuMobileLabel">
+  <div class="offcanvas-header">
+    <span class="brand" id="menuMobileLabel">Brechó <em>da Sassá</em></span>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form data-search role="search" class="mb-3" aria-label="Buscar peças">
+      <div class="input-group">
+        <input type="search" name="q" class="form-control" placeholder="Buscar peça, marca…" aria-label="Buscar no catálogo">
+        <button class="btn btn-dark" aria-label="Buscar"><i class="bi bi-search"></i></button>
+      </div>
+    </form>
+    <nav aria-label="Menu móvel">
+      <a class="nav-link" href="index.html">Início</a>
+      <a class="nav-link" href="catalogo.html">Catálogo</a>
+      <a class="nav-link" href="colecoes.html">Coleções</a>
+      <a class="nav-link" href="catalogo.html?destaque=1">Destaques</a>
+      <a class="nav-link" href="sobre.html">Sobre</a>
+      <a class="nav-link" href="como-comprar.html">Como comprar</a>
+      <a class="nav-link" href="contato.html">Contato</a>
+    </nav>
+    <a class="btn-boutique btn-whats w-100 text-center mt-4" data-wa href="#"><i class="bi bi-whatsapp me-1"></i> Falar no WhatsApp</a>
+  </div>
+</div>
+
+<main>
+  <!-- 1. HERO EDITORIAL -->
+  <section class="hero" aria-label="Campanha atual">
+    <div class="hero-slides">
+      <div class="hero-slide active"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1600&auto=format&fit=crop" alt="Editorial de moda vintage — modelo em look terroso" fetchpriority="high"></div>
+      <div class="hero-slide"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop" alt="Peças leves de verão no arara" loading="lazy"></div>
+      <div class="hero-slide"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1600&auto=format&fit=crop" alt="Cliente com sacolas — moda circular" loading="lazy"></div>
+    </div>
+    <div class="container hero-content">
+      <p class="eyebrow text-white-50">Curadoria vintage · Peças únicas</p>
+      <h1>Vista uma história <em>que ninguém mais tem.</em></h1>
+      <p class="mt-2 mb-4" style="max-width:38ch;color:#EDE5D6">Garimpo semanal, peças higienizadas e preço justo. Quando vende, acabou.</p>
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="catalogo.html" class="btn-boutique" style="background:#FAF6EF;color:#1B1815!important;border-color:#FAF6EF">Ver coleção</a>
+        <a href="colecoes.html?colecao=inverno" class="btn-outline-b" style="color:#fff!important;border-color:#fff">Campanha de inverno</a>
+      </div>
+      <div class="hero-dots" role="tablist" aria-label="Trocar imagem da campanha">
+        <button class="active" aria-label="Imagem 1"></button><button aria-label="Imagem 2"></button><button aria-label="Imagem 3"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. NOVIDADES -->
+  <section class="section" aria-labelledby="t-nov">
+    <div class="container">
+      <div class="section-head reveal">
+        <div><p class="eyebrow">Acabou de chegar</p><h2 id="t-nov">Novidades da semana</h2><p>As últimas do garimpo — peça única não volta.</p></div>
+        <a class="link-more d-none d-md-inline" href="catalogo.html?ordenar=recentes">Ver tudo</a>
+      </div>
+      <div class="product-grid" id="novidadesGrid" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+      <div class="text-center mt-4 d-md-none"><a class="btn-outline-b" href="catalogo.html">Ver catálogo completo</a></div>
+    </div>
+  </section>
+
+  <!-- 3. COLEÇÃO DA TEMPORADA -->
+  <section class="section-tight" aria-label="Coleções da temporada">
+    <div class="container">
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <a href="colecoes.html?colecao=inverno" class="campaign reveal">
+            <img src="https://images.unsplash.com/photo-1539533018447-63fcce2678e3?q=80&w=1000&auto=format&fit=crop" alt="Coleção inverno — trench coat bege" loading="lazy">
+            <div class="campaign-body"><p class="eyebrow text-white-50">Campanha</p><h3>Inverno</h3><p class="mb-0">Couro, tricot & trench coats →</p></div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6">
+          <a href="colecoes.html?colecao=verao" class="campaign reveal reveal-d1">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000&auto=format&fit=crop" alt="Coleção verão — vestidos fluidos" loading="lazy">
+            <div class="campaign-body"><p class="eyebrow text-white-50">Campanha</p><h3>Verão</h3><p class="mb-0">Seda, viscose & jeans claro →</p></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. DESTAQUES -->
+  <section class="section" aria-labelledby="t-dest">
+    <div class="container">
+      <div class="section-head reveal">
+        <div><p class="eyebrow">Seleção manual</p><h2 id="t-dest">Achados da curadoria</h2><p>Raridades e peças especiais escolhidas a dedo.</p></div>
+        <a class="link-more d-none d-md-inline" href="catalogo.html?destaque=1">Ver destaques</a>
+      </div>
+      <div class="product-grid" id="destaquesGrid" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+    </div>
+  </section>
+
+  <!-- 5. SHOP POR CATEGORIA -->
+  <section class="section-tight" aria-labelledby="t-cat">
+    <div class="container">
+      <div class="section-head reveal"><div><p class="eyebrow">Navegue</p><h2 id="t-cat">Shop por categoria</h2></div></div>
+      <div class="row g-3">
+        <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal" href="catalogo.html?categoria=Vestidos"><img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=500&auto=format&fit=crop" alt="Vestidos" loading="lazy"><span>Vestidos</span></a></div>
+        <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d1" href="catalogo.html?categoria=Jaquetas"><img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=500&auto=format&fit=crop" alt="Jaquetas" loading="lazy"><span>Jaquetas</span></a></div>
+        <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d2" href="catalogo.html?categoria=Calças"><img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=500&auto=format&fit=crop" alt="Calças" loading="lazy"><span>Calças</span></a></div>
+        <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal" href="catalogo.html?categoria=Blusas"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=500&auto=format&fit=crop" alt="Blusas" loading="lazy"><span>Blusas</span></a></div>
+        <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d1" href="catalogo.html?categoria=Saias"><img src="https://images.unsplash.com/photo-1583496661160-fb5886a13d44?q=80&w=500&auto=format&fit=crop" alt="Saias" loading="lazy"><span>Saias</span></a></div>
+        <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d2" href="catalogo.html?categoria=Acessórios"><img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=500&auto=format&fit=crop" alt="Acessórios" loading="lazy"><span>Acessórios</span></a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. HISTÓRIA -->
+  <section class="section" aria-labelledby="t-hist">
+    <div class="container">
+      <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-6 reveal">
+          <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1000&auto=format&fit=crop" alt="Arara do brechó com peças selecionadas" loading="lazy" style="border-radius:14px;width:100%;aspect-ratio:4/3;object-fit:cover">
+        </div>
+        <div class="col-12 col-lg-6 reveal reveal-d1">
+          <p class="eyebrow">A marca</p>
+          <h2 id="t-hist">Moda circular com olhar de boutique</h2>
+          <p class="text-secondary">Garimpamos peças únicas, higienizamos com cuidado e fotografamos cada detalhe — para você comprar vintage com a confiança de loja nova.</p>
+          <a class="btn-outline-b mt-2" href="sobre.html">Conheça o brechó</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. INSTAGRAM -->
+  <section class="section-tight" aria-labelledby="t-ig">
+    <div class="container">
+      <div class="section-head reveal"><div><p class="eyebrow">No Instagram</p><h2 id="t-ig"><span data-config="instagram">@brechodasassapoa</span></h2><p>Looks, bastidores e novidades em primeira mão.</p></div>
+      <a class="link-more d-none d-md-inline" data-ig href="#">Seguir</a></div>
+      <div class="insta-grid reveal">
+        <a data-ig href="#" aria-label="Foto do Instagram 1"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=400&auto=format&fit=crop" alt="Look vintage 1" loading="lazy"></a>
+        <a data-ig href="#" aria-label="Foto do Instagram 2"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=400&auto=format&fit=crop" alt="Look vintage 2" loading="lazy"></a>
+        <a data-ig href="#" aria-label="Foto do Instagram 3"><img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=400&auto=format&fit=crop" alt="Look vintage 3" loading="lazy"></a>
+        <a data-ig href="#" aria-label="Foto do Instagram 4"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=400&auto=format&fit=crop" alt="Look vintage 4" loading="lazy"></a>
+        <a data-ig href="#" aria-label="Foto do Instagram 5"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=400&auto=format&fit=crop" alt="Look vintage 5" loading="lazy"></a>
+        <a data-ig href="#" aria-label="Foto do Instagram 6"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=400&auto=format&fit=crop" alt="Look vintage 6" loading="lazy"></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. CTA FINAL -->
+  <section class="section" aria-label="Chamada final">
+    <div class="container">
+      <div class="final-cta reveal">
+        <p class="eyebrow" style="color:#D8C6A8">Peça única · Preço justo</p>
+        <h2>Encontrou sua peça? Ela pode vender hoje.</h2>
+        <p>Chama no WhatsApp que a gente confirma disponibilidade na hora.</p>
+        <div class="d-flex gap-2 justify-content-center flex-wrap mt-3">
+          <a class="btn-boutique btn-whats" data-wa href="#"><i class="bi bi-whatsapp me-1"></i> Chamar no WhatsApp</a>
+          <a class="btn-outline-b" style="color:#FAF6EF!important;border-color:#FAF6EF" href="catalogo.html">Ver catálogo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" aria-label="Rodapé">
+  <div class="container py-5">
+    <div class="row g-4">
+      <div class="col-12 col-md-4"><a class="brand" href="index.html">Brechó <em>da Sassá</em></a>
+        <p class="mt-2 mb-1" data-config="tagline">Peças únicas com história</p>
+        <p class="small" style="color:#B9AE9C"><span data-config="cidade">Porto Alegre · RS</span> · <span data-config="horario">Seg a Sáb · 10h às 19h</span></p></div>
+      <div class="col-6 col-md-4"><h3 class="h6 text-uppercase" style="letter-spacing:.15em">Navegar</h3>
+        <ul class="list-unstyled small d-grid gap-1">
+          <li><a href="index.html">Início</a></li><li><a href="catalogo.html">Catálogo</a></li>
+          <li><a href="colecoes.html">Coleções</a></li><li><a href="sobre.html">Sobre</a></li>
+          <li><a href="como-comprar.html">Como comprar</a></li><li><a href="contato.html">Contato</a></li>
+        </ul></div>
+      <div class="col-6 col-md-4"><h3 class="h6 text-uppercase" style="letter-spacing:.15em">Atendimento</h3>
+        <ul class="list-unstyled small d-grid gap-1">
+          <li><a data-wa href="#"><i class="bi bi-whatsapp me-1"></i> WhatsApp</a></li>
+          <li><a data-ig href="#"><i class="bi bi-instagram me-1"></i> <span data-config="instagram">@brechodasassapoa</span></a></li>
+          <li><span style="color:#B9AE9C"><i class="bi bi-geo-alt me-1"></i><span data-config="cidade">São Paulo · SP</span></span></li>
+        </ul></div>
+    </div>
+  </div>
+  <div class="footer-bottom"><div class="container d-flex justify-content-between flex-wrap gap-2">
+    <span>© <span data-year>2026</span> <span data-config="nome">Brechó Essência</span> · Moda circular</span>
+    <span>Feito com curadoria · V1 estática</span>
+  </div></div>
+</footer>
+
+<a class="wa-float" data-wa href="#" aria-label="Conversar no WhatsApp"><i class="bi bi-whatsapp"></i></a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/catalog.js"></script>
+<script src="js/animations.js"></script>
+</body>
+</html>
