@@ -16,59 +16,36 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
   <link href="css/animations.css" rel="stylesheet">
+  <link href="css/cart.css" rel="stylesheet">
 </head>
 <body data-page="inicio">
 
 <header class="site-header" id="siteHeader">
-  <nav class="navbar navbar-expand-lg h-100" aria-label="Navegação principal">
-    <div class="container h-100">
-      <a class="brand" href="index.html" aria-label="Brechó Essência — início">Brechó <em>da Sassá</em></a>
-      <div class="d-flex align-items-center gap-2 ms-auto">
-        <form class="search-inline d-none d-lg-flex" data-search role="search" aria-label="Buscar peças">
-          <input type="search" name="q" placeholder="Buscar…" aria-label="Buscar peça ou marca no catálogo">
-          <button class="btn btn-link p-1" aria-label="Buscar"><i class="bi bi-search"></i></button>
-        </form>
-        <a class="btn-boutique btn-whats d-none d-md-inline-block" data-wa href="#" style="padding:.5rem 1.2rem"><i class="bi bi-whatsapp me-1"></i> WhatsApp</a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile" aria-controls="menuMobile" aria-label="Abrir menu">
-          <i class="bi bi-list fs-3"></i>
-        </button>
-      </div>
-      <div class="collapse navbar-collapse justify-content-center" id="menuDesktop">
-        <ul class="navbar-nav gap-lg-1">
-          <li class="nav-item"><a class="nav-link" data-nav="inicio" href="index.html">Início</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="catalogo" href="catalogo.html">Catálogo</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="colecoes" href="colecoes.html">Coleções</a></li>
-          <li class="nav-item"><a class="nav-link" href="catalogo.html?destaque=1">Destaques</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="sobre" href="sobre.html">Sobre</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="como-comprar" href="como-comprar.html">Como comprar</a></li>
-          <li class="nav-item"><a class="nav-link" data-nav="contato" href="contato.html">Contato</a></li>
-        </ul>
+  <nav class="navbar navbar-expand-lg" aria-label="Navegação principal">
+    <div class="container nav-layout">
+      <a class="brand" href="index.html" aria-label="Brechó da Sassá, página inicial"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-text">Brechó <em>da Sassá</em></span></a>
+      <div class="collapse navbar-collapse justify-content-center" id="menuDesktop"><ul class="navbar-nav"><li class="nav-item"><a class="nav-link" data-nav="inicio" href="index.html">Início</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="catalogo" href="catalogo.html">Catálogo</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="colecoes" href="colecoes.html">Coleções</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="sobre" href="sobre.html">Sobre</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="como-comprar" href="como-comprar.html">Como comprar</a></li>
+<li class="nav-item"><a class="nav-link" data-nav="contato" href="contato.html">Contato</a></li></ul></div>
+      <div class="nav-actions">
+        <a class="nav-search" href="catalogo.html#searchInput" aria-label="Buscar no catálogo"><i class="bi bi-search" aria-hidden="true"></i></a>
+        <button class="btn-cart-icon" type="button" data-cart-toggle aria-label="Abrir carrinho"><i class="bi bi-bag" aria-hidden="true"></i><span class="cart-badge d-none" data-badge-count>0</span></button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile" aria-controls="menuMobile" aria-label="Abrir menu"><i class="bi bi-list" aria-hidden="true"></i></button>
       </div>
     </div>
   </nav>
 </header>
-
-<div class="offcanvas offcanvas-end" tabindex="-1" id="menuMobile" aria-labelledby="menuMobileLabel">
-  <div class="offcanvas-header">
-    <span class="brand" id="menuMobileLabel">Brechó <em>da Sassá</em></span>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
-  </div>
-  <div class="offcanvas-body">
-    <form data-search role="search" class="mb-3" aria-label="Buscar peças">
-      <div class="input-group">
-        <input type="search" name="q" class="form-control" placeholder="Buscar peça, marca…" aria-label="Buscar no catálogo">
-        <button class="btn btn-dark" aria-label="Buscar"><i class="bi bi-search"></i></button>
-      </div>
-    </form>
-    <nav aria-label="Menu móvel">
-      <a class="nav-link" href="index.html">Início</a>
-      <a class="nav-link" href="catalogo.html">Catálogo</a>
-      <a class="nav-link" href="colecoes.html">Coleções</a>
-      <a class="nav-link" href="catalogo.html?destaque=1">Destaques</a>
-      <a class="nav-link" href="sobre.html">Sobre</a>
-      <a class="nav-link" href="como-comprar.html">Como comprar</a>
-      <a class="nav-link" href="contato.html">Contato</a>
-    </nav>
+<div class="offcanvas offcanvas-end menu-mobile" tabindex="-1" id="menuMobile" aria-labelledby="menuMobileLabel">
+  <div class="offcanvas-header"><span class="brand" id="menuMobileLabel"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-text">Brechó <em>da Sassá</em></span></span><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button></div>
+  <div class="offcanvas-body"><nav aria-label="Menu móvel"><a class="nav-link" data-nav="inicio" href="index.html">Início</a>
+<a class="nav-link" data-nav="catalogo" href="catalogo.html">Catálogo</a>
+<a class="nav-link" data-nav="colecoes" href="colecoes.html">Coleções</a>
+<a class="nav-link" data-nav="sobre" href="sobre.html">Sobre</a>
+<a class="nav-link" data-nav="como-comprar" href="como-comprar.html">Como comprar</a>
+<a class="nav-link" data-nav="contato" href="contato.html">Contato</a></nav>
     <a class="btn-boutique btn-whats w-100 text-center mt-4" data-wa href="#"><i class="bi bi-whatsapp me-1"></i> Falar no WhatsApp</a>
   </div>
 </div>
@@ -147,7 +124,7 @@
         <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d1" href="catalogo.html?categoria=Jaquetas"><img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=500&auto=format&fit=crop" alt="Jaquetas" loading="lazy"><span>Jaquetas</span></a></div>
         <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d2" href="catalogo.html?categoria=Calças"><img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=500&auto=format&fit=crop" alt="Calças" loading="lazy"><span>Calças</span></a></div>
         <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal" href="catalogo.html?categoria=Blusas"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=500&auto=format&fit=crop" alt="Blusas" loading="lazy"><span>Blusas</span></a></div>
-        <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d1" href="catalogo.html?categoria=Saias"><img src="https://images.unsplash.com/photo-1583496661160-fb5886a13d44?q=80&w=500&auto=format&fit=crop" alt="Saias" loading="lazy"><span>Saias</span></a></div>
+        <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d1" href="catalogo.html?categoria=Saias"><img src="https://images.unsplash.com/photo-1644424234926-910967518dbb?q=80&w=500&auto=format&fit=crop" alt="Saias" loading="lazy"><span>Saias</span></a></div>
         <div class="col-6 col-md-4 col-lg-2"><a class="cat-tile reveal reveal-d2" href="catalogo.html?categoria=Acessórios"><img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=500&auto=format&fit=crop" alt="Acessórios" loading="lazy"><span>Acessórios</span></a></div>
       </div>
     </div>
@@ -218,12 +195,12 @@
         <ul class="list-unstyled small d-grid gap-1">
           <li><a data-wa href="#"><i class="bi bi-whatsapp me-1"></i> WhatsApp</a></li>
           <li><a data-ig href="#"><i class="bi bi-instagram me-1"></i> <span data-config="instagram">@brechodasassapoa</span></a></li>
-          <li><span style="color:#B9AE9C"><i class="bi bi-geo-alt me-1"></i><span data-config="cidade">São Paulo · SP</span></span></li>
+          <li><span style="color:#B9AE9C"><i class="bi bi-geo-alt me-1"></i><span data-config="cidade">Porto Alegre · RS</span></span></li>
         </ul></div>
     </div>
   </div>
   <div class="footer-bottom"><div class="container d-flex justify-content-between flex-wrap gap-2">
-    <span>© <span data-year>2026</span> <span data-config="nome">Brechó Essência</span> · Moda circular</span>
+    <span>© <span data-year>2026</span> <span data-config="nome">Brechó da Sassá</span> · Moda circular</span>
     <span>Feito com curadoria · V1 estática</span>
   </div></div>
 </footer>
@@ -232,6 +209,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/app.js"></script>
+<script src="js/cart.js"></script>
 <script src="js/catalog.js"></script>
 <script src="js/animations.js"></script>
 </body>
