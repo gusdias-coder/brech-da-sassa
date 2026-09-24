@@ -263,3 +263,47 @@ img[loading="lazy"]{background:var(--cream-2)}
   .pcard-name{font-size:.92rem}
   .search-inline input{width:120px}
 }
+
+/* Navegação revista: marca à esquerda, destinos centrais e ações à direita. */
+.site-header .navbar{padding:0}
+.site-header .nav-layout{display:grid;grid-template-columns:minmax(175px,1fr) auto minmax(100px,1fr);align-items:center;gap:1rem}
+.site-header .navbar-collapse{display:flex!important;min-width:0}
+.site-header .navbar-nav{flex-direction:row;gap:.12rem;align-items:center}
+.site-header .nav-link{font-size:.79rem;letter-spacing:.015em;text-transform:none;font-weight:600;padding:.58rem .65rem!important;border-radius:999px}
+.site-header .nav-link::after{display:none}
+.site-header .nav-link:hover{background:#f0e8db;color:var(--accent-dark)!important}
+.site-header .nav-link.active{background:var(--ink);color:#fff!important}
+.nav-actions{display:flex;align-items:center;justify-content:flex-end;gap:.6rem}
+.nav-search{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;color:var(--ink);text-decoration:none;font-size:1.1rem}
+.nav-search:hover{background:#f0e8db;color:var(--accent-dark)}
+.brand{display:inline-flex;align-items:center;gap:.55rem;line-height:1.1}
+.brand-mark{font-family:var(--font-serif);display:inline-flex;align-items:center;justify-content:center;background:var(--ink);color:var(--cream);font-size:1.15rem;font-style:italic;width:36px;height:36px;border-radius:50%;flex:0 0 auto}
+.brand-text{display:inline-block}
+.site-header .brand{font-size:1.18rem}
+.site-header .navbar-toggler{padding:.15rem .25rem;font-size:1.55rem;color:var(--ink)}
+.menu-mobile{--bs-offcanvas-width:min(360px,90vw);background:var(--cream)}
+.menu-mobile .offcanvas-header{padding:1.5rem;border-bottom:1px solid var(--line)}
+.menu-mobile .offcanvas-body{padding:1.4rem}
+.menu-mobile nav{display:grid;gap:.3rem}
+.menu-mobile .nav-link{font-size:1rem;letter-spacing:0;text-transform:none;padding:.75rem 1rem!important;border-radius:9px}
+.menu-mobile .nav-link::after{display:none}
+.menu-mobile .nav-link.active{background:var(--ink);color:#fff!important}
+@media(max-width:1199.98px){.site-header .nav-layout{grid-template-columns:minmax(150px,1fr) auto minmax(90px,1fr);gap:.25rem}.site-header .nav-link{font-size:.75rem;padding:.5rem .43rem!important}.site-header .brand{font-size:1.04rem}}
+@media(max-width:991.98px){.site-header .nav-layout{display:flex;justify-content:space-between;gap:1rem}.site-header .navbar-collapse{display:none!important}.site-header .brand{font-size:1.25rem}}
+@media(max-width:420px){.site-header .brand{font-size:1.08rem}.brand-mark{width:32px;height:32px}.nav-actions{gap:.1rem}}
+/* Disponibilidade visível sem apagar as fotos da peça. */
+.pcard.is-sold,.pcard.is-reserved{border-color:#d8cfc3}
+.pcard.is-sold .pcard-media img,.pcard.is-reserved .pcard-media img{filter:saturate(.72);opacity:.88}
+.pcard.is-sold .pcard-media::after,.pcard.is-reserved .pcard-media::after{content:"";background:linear-gradient(180deg,transparent 52%,rgba(27,24,21,.55));pointer-events:none}
+.pcard-state{position:absolute;bottom:.7rem;left:.7rem;z-index:3;background:#fff;color:var(--ink);border-radius:999px;padding:.42rem .78rem;display:inline-flex;gap:.4rem;align-items:center;font-size:.83rem;font-weight:700;box-shadow:0 3px 14px rgba(0,0,0,.12)}
+.is-reserved .pcard-state{background:#fff2d9;color:#684624}
+.is-sold .pcard-state{background:#33312f;color:#fff}
+.pcard-availability{font-size:.78rem;font-weight:600;color:#765d49;margin-top:.2rem}
+.availability-note{display:flex;align-items:flex-start;gap:.7rem;padding:1rem 1.2rem;border-radius:10px;line-height:1.5;font-size:.94rem}
+.availability-note i{font-size:1.3rem;line-height:1.2}
+.availability-note.reserved{background:#fff1d8;color:#684624}
+.availability-note.sold{background:#e8e4df;color:#45403b}
+.catalog-editorial,.how-visual{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-top:1.25rem;max-width:480px}
+.catalog-editorial img,.how-visual img{width:100%;height:122px;object-fit:cover;border-radius:9px}
+.how-visual{max-width:none;margin:0 0 1.5rem}.how-visual img{height:220px}
+@media(max-width:575.98px){.catalog-editorial img{height:96px}.how-visual img{height:140px}}
