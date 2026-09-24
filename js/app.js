@@ -4,15 +4,15 @@
    Preparado para futuro: auth, favoritos, pedidos (não implementar V1).
    ============================================================ */
 window.BRECHO_CONFIG = {
-  nome: "Brechó Essência",
+  nome: "Brechó da Sassá",
   tagline: "Peças únicas com história",
   whatsapp: "5551998348428", // <-- TROCAR pelo número real (DDI+DDD+Número)
-  whatsappTextoPadrao: "Olá! Vim pelo site e quero saber mais sobre as peças. 💛",
+  whatsappTextoPadrao: "Olá! Vim pelo site e quero saber mais sobre as peças! ",
   instagram: "@brechodasassapoa",
-  instagramUrl: "https://instagram.com/brecho.essencia",
-  cidade: "São Paulo · SP",
+  instagramUrl: "https://instagram.com/brechodasassapoa",
+  cidade: "Porto Alegre · RS",
   horario: "Seg a Sáb · 10h às 19h",
-  email: "oi@brechoessencia.com.br"
+  email: ""
 };
 
 // ---- Utils ----
@@ -74,8 +74,8 @@ function initHeader() {
   }
 
   const page = document.body.dataset.page || "";
-  $$('.site-header .nav-link[data-nav]').forEach((a) => {
-    if (a.dataset.nav === page) a.classList.add("active");
+  $$('.site-header .nav-link[data-nav], .menu-mobile .nav-link[data-nav]').forEach((a) => {
+    if (a.dataset.nav === page) { a.classList.add("active"); a.setAttribute("aria-current", "page"); }
   });
 
   $$("form[data-search]").forEach((form) => {
@@ -88,25 +88,38 @@ function initHeader() {
 }
 
 // Card de produto — usado na Home, Catálogo e Coleções
+// Obs.: deixou de ser um único <a> por causa do botão "adicionar ao carrinho";
+// agora um <a class="pcard-link"> cobre o card inteiro (stretched-link) e o
+// botão de carrinho fica por cima dele (mesmo comportamento de clique de antes).
 function productCard(p) {
   const statusClass = p.status === "Vendido" ? "is-sold" : p.status === "Reservado" ? "is-reserved" : "";
   const second = p.fotos[1] ? `<img class="second" src="${p.fotos[1]}" alt="${p.nome}" loading="lazy">` : "";
+  const podeComprar = p.status === "Disponível";
+  const cartPayload = JSON.stringify({
+    id: p.id, nome: p.nome, preco: p.preco, foto: p.fotos[0],
+    tamanho: p.tamanho, cor: p.cor, status: p.status,
+  }).replace(/"/g, "&quot;");
   return `
-  <a href="produto.html?id=${p.id}" class="pcard ${statusClass} reveal" aria-label="Ver ${p.nome}">
+  <div class="pcard ${statusClass} reveal">
+    <a href="produto.html?id=${p.id}" class="pcard-link" aria-label="Ver ${p.nome}"></a>
     <div class="pcard-media">
       <div class="badges">
         ${p.novo ? `<span class="badge-b badge-novo">Novo</span>` : ""}
         ${p.destaque ? `<span class="badge-b badge-destaque">Destaque</span>` : ""}
+        ${p.fotoIlustrativa ? `<span class="badge-b badge-status">Foto ilustrativa</span>` : ""}
       </div>
       <img class="main img-fade" src="${p.fotos[0]}" alt="${p.nome} — ${p.categoria}" loading="lazy" width="600" height="800" onload="this.classList.add('loaded')">
       ${second}
+      ${!podeComprar ? `<span class="pcard-state" role="status"><i class="bi ${p.status === "Reservado" ? "bi-clock-history" : "bi-check2-circle"}" aria-hidden="true"></i> ${p.status === "Reservado" ? "Em reserva" : "Peça vendida"}</span>` : ""}
+      ${podeComprar ? `<button type="button" class="pcard-add" data-add-cart="${cartPayload}" aria-label="Adicionar ${p.nome} ao carrinho"><i class="bi bi-bag-plus"></i></button>` : ""}
     </div>
     <div class="pcard-body">
       <h3 class="pcard-name">${p.nome}</h3>
       <span class="pcard-meta">${p.categoria} · Tam ${p.tamanho} · ${p.condicao}</span>
       <span class="pcard-price">${BRL(p.preco)}</span>
+      ${!podeComprar ? `<span class="pcard-availability">${p.status === "Reservado" ? "Aguardando confirmação" : "Indisponível para compra"}</span>` : ""}
     </div>
-  </a>`;
+  </div>`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
