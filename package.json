@@ -1,0 +1,11 @@
+{
+  "name": "brecho-da-sassa",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "validate:images": "node scripts/validate-images.mjs",
+    "validate:images:remote": "node scripts/validate-images.mjs --remote",
+    "preview": "node scripts/serve.mjs"
+  },
+  "engines": { "node": ">=22" }
+}
