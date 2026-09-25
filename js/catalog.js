@@ -100,7 +100,7 @@ function renderGrid(gridEl, list, { emptyTitle = "Nenhuma peça encontrada", emp
     const chips = activeFilterChips(CatalogState);
     chipsEl.innerHTML = chips.length
       ? `<span class="text-muted small me-1">Filtros ativos:</span>` + chips.map((c) =>
-          `<span class="filter-chip">${c.label}<button data-unchip="${c.key}" aria-label="Remover filtro ${c.label}">×</button></span>`).join("")
+          `<span class="filter-chip">${escapeHTML(c.label)}<button data-unchip="${c.key}" aria-label="Remover filtro ${escapeHTML(c.label)}">×</button></span>`).join("")
       : "";
   }
   // Re-observa reveals + fade das imagens
@@ -220,7 +220,8 @@ async function initProductPage() {
   if (!wrap) return;
   const products = await fetchJSON("data/products.json");
   const id = getParam("id");
-  const p = products.find((x) => x.id === id) || products[0];
+  const p = products.find((x) => x.id === id);
+  if (!p) { wrap.innerHTML = '<div class="empty-state"><h1>Peça não encontrada</h1><a class="btn-boutique" href="catalogo.html">Explorar catálogo</a></div>'; return; }
   document.title = `${p.nome} · ${BRECHO_CONFIG.nome}`;
 
   const thumbs = p.fotos.map((f, i) =>
