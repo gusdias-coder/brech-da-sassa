@@ -7,15 +7,35 @@ window.BRECHO_CONFIG = {
   nome: "Brechó da Sassá",
   tagline: "Peças únicas com história",
   whatsapp: "5551998348428", // <-- TROCAR pelo número real (DDI+DDD+Número)
-  whatsappTextoPadrao: "Olá! Vim pelo site e quero saber mais sobre as peças! ",
+  whatsappTextoPadrao: "Olá! Vim pelo site e quero saber mais sobre as peças. 💛",
   instagram: "@brechodasassapoa",
-  instagramUrl: "https://instagram.com/brechodasassapoa",
-  cidade: "Porto Alegre · RS",
+  instagramUrl: "https://instagram.com/brecho.essencia",
+  cidade: "São Paulo · SP",
   horario: "Seg a Sáb · 10h às 19h",
-  email: ""
+  email: "oi@brechoessencia.com.br"
 };
 
 // ---- Utils ----
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+window.BrechoImages = {
+  fallbackPath: "assets/img/product-placeholder.svg",
+  productAlt: (p, i = 0) => `${p.nome} — foto ${i + 1}`,
+  tag(src, alt, options = {}) {
+    let safe = this.fallbackPath;
+    try { if (["https:", "http:"].includes(new URL(src, location.href).protocol)) safe = src || safe; } catch {}
+    return `<img src="${escapeHTML(safe)}" alt="${escapeHTML(alt)}" class="${escapeHTML(options.className || '')}" loading="lazy"${options.width ? ` width="${Number(options.width)}"` : ''}${options.height ? ` height="${Number(options.height)}"` : ''}>`;
+  }
+};
+document.addEventListener("error", event => {
+  const img = event.target;
+  if (img instanceof HTMLImageElement && !img.dataset.fallback) {
+    img.dataset.fallback = "true";
+    img.src = BrechoImages.fallbackPath;
+    img.classList.add("loaded");
+  }
+}, true);
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 const BRL = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -74,8 +94,8 @@ function initHeader() {
   }
 
   const page = document.body.dataset.page || "";
-  $$('.site-header .nav-link[data-nav], .menu-mobile .nav-link[data-nav]').forEach((a) => {
-    if (a.dataset.nav === page) { a.classList.add("active"); a.setAttribute("aria-current", "page"); }
+  $$('.site-header .nav-link[data-nav]').forEach((a) => {
+    if (a.dataset.nav === page) a.classList.add("active");
   });
 
   $$("form[data-search]").forEach((form) => {
@@ -93,31 +113,31 @@ function initHeader() {
 // botão de carrinho fica por cima dele (mesmo comportamento de clique de antes).
 function productCard(p) {
   const statusClass = p.status === "Vendido" ? "is-sold" : p.status === "Reservado" ? "is-reserved" : "";
-  const second = p.fotos[1] ? `<img class="second" src="${p.fotos[1]}" alt="${p.nome}" loading="lazy">` : "";
+  const statusLabel = p.status === "Vendido" ? "Vendida" : p.status === "Reservado" ? "Reservada" : "";
+  const photos = p.fotos || [];
+  const second = photos[1] ? BrechoImages.tag(photos[1], BrechoImages.productAlt(p, 1), { className: 'second' }) : "";
   const podeComprar = p.status === "Disponível";
   const cartPayload = JSON.stringify({
-    id: p.id, nome: p.nome, preco: p.preco, foto: p.fotos[0],
+    id: p.id, nome: p.nome, preco: p.preco, foto: photos[0] || BrechoImages.fallbackPath,
     tamanho: p.tamanho, cor: p.cor, status: p.status,
-  }).replace(/"/g, "&quot;");
+  });
   return `
   <div class="pcard ${statusClass} reveal">
-    <a href="produto.html?id=${p.id}" class="pcard-link" aria-label="Ver ${p.nome}"></a>
+    <a href="produto.html?id=${encodeURIComponent(p.id)}" class="pcard-link" aria-label="Ver ${escapeHTML(p.nome)}"></a>
     <div class="pcard-media">
       <div class="badges">
         ${p.novo ? `<span class="badge-b badge-novo">Novo</span>` : ""}
         ${p.destaque ? `<span class="badge-b badge-destaque">Destaque</span>` : ""}
-        ${p.fotoIlustrativa ? `<span class="badge-b badge-status">Foto ilustrativa</span>` : ""}
       </div>
-      <img class="main img-fade" src="${p.fotos[0]}" alt="${p.nome} — ${p.categoria}" loading="lazy" width="600" height="800" onload="this.classList.add('loaded')">
+      ${BrechoImages.tag(photos[0], BrechoImages.productAlt(p), { className: 'main img-fade' })}
       ${second}
-      ${!podeComprar ? `<span class="pcard-state" role="status"><i class="bi ${p.status === "Reservado" ? "bi-clock-history" : "bi-check2-circle"}" aria-hidden="true"></i> ${p.status === "Reservado" ? "Em reserva" : "Peça vendida"}</span>` : ""}
-      ${podeComprar ? `<button type="button" class="pcard-add" data-add-cart="${cartPayload}" aria-label="Adicionar ${p.nome} ao carrinho"><i class="bi bi-bag-plus"></i></button>` : ""}
+      ${statusLabel ? `<span class="product-status-overlay">${statusLabel}</span>` : ""}
+      ${podeComprar ? `<button type="button" class="pcard-add" data-add-cart="${escapeHTML(cartPayload)}" aria-label="Adicionar ${escapeHTML(p.nome)} ao carrinho"><i class="bi bi-bag-plus"></i></button>` : ""}
     </div>
     <div class="pcard-body">
-      <h3 class="pcard-name">${p.nome}</h3>
-      <span class="pcard-meta">${p.categoria} · Tam ${p.tamanho} · ${p.condicao}</span>
+      <h3 class="pcard-name">${escapeHTML(p.nome)}</h3>
+      <span class="pcard-meta">${escapeHTML(p.categoria)} · Tam ${escapeHTML(p.tamanho)} · ${escapeHTML(p.condicao)}</span>
       <span class="pcard-price">${BRL(p.preco)}</span>
-      ${!podeComprar ? `<span class="pcard-availability">${p.status === "Reservado" ? "Aguardando confirmação" : "Indisponível para compra"}</span>` : ""}
     </div>
   </div>`;
 }
@@ -125,4 +145,9 @@ function productCard(p) {
 document.addEventListener("DOMContentLoaded", () => {
   applyConfig();
   initHeader();
+  const hero = document.querySelector('.hero');
+  const floatingWhatsApp = document.querySelector('.wa-float');
+  if (hero && floatingWhatsApp && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => { floatingWhatsApp.hidden = entry.isIntersecting; }).observe(hero);
+  }
 });
